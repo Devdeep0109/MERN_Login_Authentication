@@ -24,22 +24,22 @@ router.post('/signup' , async(req ,res) =>{
 
 
 // SIGN IN .............
-router.post('/signin' , (req ,res) =>{
-    const {email,password} = req.body;
-    User.findOne({email,password})
-    .then(user =>{
-        if(user){
-            if(user.password === password){
-                res.status(200).json("success");
-            }
-            else{
-                res.status(400).json("wrong password")
-            }
+router.post('/signin' , async (req ,res) =>{
+    try{
+        const {email,password} = req.body;
+        const token = await User.matchPasswordAndCreateToken(email,password);
+
+        //make cookie....
+        if(token.success === false){
+            res.status(400).json(token.error);
         }
         else{
-            res.json(400).json("No user found");
+            res.status(200).json(token);
         }
-    })
+    }
+    catch(err){
+        return res.err;
+    }
 })
 
 

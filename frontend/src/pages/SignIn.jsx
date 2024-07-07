@@ -2,6 +2,8 @@ import { useState } from "react";
 import "./SignIn.css";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import Cookies from "js-cookie";
+
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
@@ -12,12 +14,17 @@ const SignIn = () => {
     event.preventDefault();
         // Add logic to handle sign-in
     axios.post("http://localhost:8000/api/signin",{email,password})
-    .then(result => {console.log(result) 
-      if(result.status === 200){
-        navigate('/home')
+    .then(result => {
+      console.log(result);
+      if(result.status == 200){
+        Cookies.set("token", result.data )
+        navigate("/home")
       }
-    })
-    .catch(err => console.log(err))
+      else{
+        alert(result.data)
+      }
+  })
+    .catch(err => alert(err))
   };
 
   return (
